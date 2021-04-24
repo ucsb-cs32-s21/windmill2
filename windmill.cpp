@@ -3,6 +3,8 @@
 // Initializes windmill with specified center at the center of the sails
 Windmill::Windmill(vec2 c, double d)
 {
+    depth = d;
+
     // roof
     ellipses.push_back(make_shared<ellipse>(vec2(c.x(),c.y()+40), vec2(40,40), depth+0.1, color(150,150,150)));
     // center circle

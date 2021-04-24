@@ -17,10 +17,7 @@ using namespace std;
   interior points write a different color then exterior points */
 
 void writeOut(ostream& out, ppmR& theWriter,  
-				vector<shared_ptr<ellipse>> IEs, 
-				vector<shared_ptr<Rect> > Rs,
-				vector<shared_ptr<Polygon> > Ps,
-				Windmill theWindmill) {
+				vector<shared_ptr<Windmill>> Windmills) {
 
 	float res;
 	color inC;
@@ -30,54 +27,34 @@ void writeOut(ostream& out, ppmR& theWriter,
 	double curDepth = -1.0;
 
 	//for every point in the 2D space
-	for (int y=0; y < theWriter.height; y++) {
-		for (int x =0; x < theWriter.width; x++) {
-
+	for (int y=0; y < theWriter.height; y++) 
+	{
+		for (int x=0; x < theWriter.width; x++) 
+		{
 			inTrue = false;
 			curDepth = -1;
-			//iterate through all possible equations (note 'front' determined by order in vector)
-
-			for (auto eq : IEs) {
-				res = eq->eval(x, y);
-				if (res < 0 && eq->getDepth() > curDepth) {
-					inC = eq->getInC();
-					inTrue = true;
-					curDepth = eq->getDepth();
-				}
-			}
-
-			for (auto rect: Rs) {
-				if (rect->evalIn(x, y) && rect->getDepth() > curDepth){
-					inC = rect->getInC();
-					inTrue = true;
-					curDepth = rect->getDepth();
-				}
-			}
-
-			for (auto poly: Ps) {
-				if (poly->eval(x, y) && poly->getDepth() > curDepth){
-					inC = poly->getInC();
-					inTrue = true;
-					curDepth = poly->getDepth();
-				}
-			}
-
-			drawC = theWindmill.eval(x, y, background);
-			if (drawC == background) {
-				//do nothing
-			} else {
+			for (auto theWindmill : Windmills)
+			{
+				drawC = theWindmill->eval(x, y, background);
+				if (drawC == background || theWindmill->getDepth() < curDepth) {
+				//do nothing if background or windmill depth is small
+				} 
+				else {
 				inTrue = true;
 				inC = drawC;
+				curDepth = theWindmill->getDepth();
+				}
 			}
-
-			if (inTrue) {			
-				theWriter.writePixel(out, x, y, inC);
-			}
-			else
+			if (inTrue) {
+					theWriter.writePixel(out, x, y, inC);
+				}
+			else {
 				theWriter.writePixel(out, x, y, background);
+			}
 		}
 		theWriter.writeNewLine(out);
 	}
+	
 }
 
 
@@ -86,16 +63,7 @@ int main(int argc, char *argv[]) {
 
 	ofstream outFile;
 	int sizeX, sizeY;
-
-	vector<shared_ptr<ellipse>> theEllipses;
-	vector<shared_ptr<Rect>> theRects;
-	vector<shared_ptr<Polygon>> thePolys;
-	vector<color> niceC;
-	niceC.push_back(color(117, 119, 186));
-	niceC.push_back(color(45, 47, 135));
-	niceC.push_back(color(174, 209, 238));
-	niceC.push_back(color(239, 174, 115));
-	niceC.push_back(color(186, 140, 117));
+	vector<shared_ptr<Windmill>> Windmills;
 
 	if (argc < 4) {
 		cerr << "Error format: a.out sizeX sizeY outfileName" << endl;
@@ -107,14 +75,17 @@ int main(int argc, char *argv[]) {
 	sizeY = stoi(argv[2]);
 	ppmR theWriter(sizeX, sizeY);
 
-	Windmill theWindmill(vec2(150,150), 0.0);
-	theWindmill.translate(vec2(100,100));
+	auto invisible = make_shared<Windmill>(vec2(150,150), -30.0);
+	auto Windmill2 = make_shared<Windmill>(vec2(150,150), 2.0);
+	Windmill2->translate(vec2(100,100));
+	Windmills.push_back(invisible);
+	Windmills.push_back(Windmill2);
 
 	outFile.open(argv[3]);
 	if (outFile) {
 		cout << "writing an image of size: " << sizeX << " " << sizeY << " to: " << argv[3] << endl;
 		theWriter.writeHeader(outFile);
-		writeOut(outFile, theWriter, theEllipses, theRects, thePolys, theWindmill);
+		writeOut(outFile, theWriter, Windmills);
 	} else {
 		cout << "Error cannot open outfile" << endl;
 		exit(0);
