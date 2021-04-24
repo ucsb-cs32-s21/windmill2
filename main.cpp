@@ -108,25 +108,7 @@ int main(int argc, char *argv[]) {
 	ppmR theWriter(sizeX, sizeY);
 
 	Windmill theWindmill(vec2(150,150), 0.0);
-
-	/*
-	Windmill temp(vec2(150,150), 1.0);
-	vector<shared_ptr<Rect>> r = temp.getRects();
-	vector<shared_ptr<ellipse>> e = temp.getEllipses();
-	vector<shared_ptr<Polygon>> p = temp.getPolys();
-	for (auto rectangle : r)
-	{
-		theRects.push_back(rectangle);
-	}
-	for (auto ellipse : e)
-	{
-		theEllipses.push_back(ellipse);
-	}
-	for (auto polygon : p)
-	{
-		thePolys.push_back(polygon);
-	}
-	*/
+	theWindmill.translate(vec2(100,100));
 
 	outFile.open(argv[3]);
 	if (outFile) {
