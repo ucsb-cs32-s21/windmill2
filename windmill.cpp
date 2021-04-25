@@ -20,7 +20,7 @@ Windmill::Windmill(vec2 c, double d)
     rects.push_back(make_shared<Rect>(vec2(c.x()-75,c.y()), vec2(c.x()-30,c.y()+15), color(120,80,20), depth+0.1));
     // right sail
     rects.push_back(make_shared<Rect>(vec2(c.x(),c.y()-2), vec2(c.x()+75,c.y()+2), color(150,130,105), depth+0.2));
-    rects.push_back(make_shared<Rect>(vec2(c.x()+30,c.y()), vec2(c.x()+75,c.y()+15), color(120,80,20), depth+0.1));
+    rects.push_back(make_shared<Rect>(vec2(c.x()+30,c.y()-15), vec2(c.x()+75,c.y()), color(120,80,20), depth+0.1));
     // body
     rects.push_back(make_shared<Rect>(vec2(c.x()-40,c.y()+40), vec2(c.x()+40,c.y()+140), color(128,0,0), depth+0.1));
     // door
